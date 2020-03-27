@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<definitions
+  name="http://www.envipco.com/wsdl/depositService.wsdl"
+  targetNamespace="http://www.envipco.com/wsdl/depositService.wsdl"
+  xmlns:typens="http://www.envipco.com/wsdl/depositService.wsdl"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+
+  <types>
+    <schema targetNamespace="http://139.59.165.125/soap/depositService.wsdl"
+            xmlns="http://www.w3.org/2001/XMLSchema">
+      <complexType name="identType">
+        <sequence>
+          <element name="user" type="xsd:string"/>
+          <element name="password" type="xsd:string"/>
+          <element name="serialNum" type="xsd:string"/>
+          <element name="timeStamp" type="xsd:string"/>
+        </sequence>
+      </complexType>
+
+      <complexType name="providerIdList">
+        <sequence>
+          <element minOccurs="0" name="list">
+            <complexType>
+              <sequence>
+                <element maxOccurs="unbounded" minOccurs="0" name="providerId" type="xsd:string"/>
+              </sequence>
+            </complexType>
+          </element>
+        </sequence>
+      </complexType>
+
+
+      <complexType name="providerType">
+        <sequence>
+          <element minOccurs="0" name="providerId" type="xsd:string"/>
+          <element minOccurs="0" name="name" type="xsd:string"/>
+          <element minOccurs="0" name="shortDescription" type="xsd:string"/>
+          <element minOccurs="0" name="longDescription" type="xsd:string"/>
+          <element minOccurs="0" name="logoSmall" type="xsd:base64Binary"/>
+          <element minOccurs="0" name="logoLarge" type="xsd:base64Binary"/>
+          <element minOccurs="0" name="logoReceipt" type="xsd:base64Binary"/>
+          <element name="orderId" type="xsd:int"/>
+          <element name="providerType" type="xsd:int"/>
+          <element name="payoutFlowType" type="xsd:int"/>
+        </sequence>
+      </complexType>
+
+      
+      <complexType name="providerList">
+        <sequence>
+          <element minOccurs="0" name="list">
+            <complexType>
+              <sequence>
+                <element maxOccurs="unbounded" minOccurs="0" name="provider" type="typens:providerType"/>
+              </sequence>
+            </complexType>
+          </element>
+        </sequence>
+      </complexType>
+
+      <complexType name="receiptType">
+        <sequence>
+          <element minOccurs="0" name="receipt" type="xsd:base64Binary"/>
+        </sequence>
+      </complexType>
+
+      <complexType name="amountType">
+        <sequence>
+          <element name="vatPerc" type="xsd:int"/>
+          <element name="amount" type="xsd:int"/>
+        </sequence>
+      </complexType>
+
+      <complexType name="amountList">
+        <sequence>
+          <element name="list" type="typens:amountType" maxOccurs="unbounded"/>
+        </sequence>
+      </complexType>
+      
+    </schema>
+  </types>
+
+     
+  <message name="IsAliveRequest">
+    <part name="ident" type="typens:identType" />
+  </message>
+  
+  <message name="IsAliveResponse">
+    <part name="status" type="xsd:int"/>
+    <part name="provider" type="typens:providerIdList"/>
+  </message>
+  
+  <message name="GetProvidersRequest">
+    <part name="ident" type="string"/>
+  </message>
+
+  <message name="GetProvidersResponse">
+    <part name="status" type="xsd:int"/>
+    <part name="provider" type="typens:providerList"/>
+  </message>
+
+
+  <message name="RegisterReceiptRequest">
+    <part name="ident" type="typens:identType"/>
+    <part name="UUID" type="xsd:string"/>
+    <part name="runningDepositNumber" type="xsd:int"/>
+    <part name="amount" type="typens:amountList"/>
+  </message>
+
+  <message name="RegisterReceiptResponse">
+    <part name="status" type="xsd:int"/>
+    <part name="receipt" type="typens:receiptType"/>
+  </message>
+
+  <message name="RegisterErrorReceiptRequest">
+    <part name="ident" type="typens:identType"/>
+    <part name="UUID" type="xsd:string"/>
+    <part name="runningDepositNumber" type="xsd:int"/>
+    <part name="amount" type="typens:amountList"/>
+  </message>
+
+  <message name="RegisterErrorReceiptResponse">
+    <part name="status" type="xsd:int"/>
+  </message>
+
+  <message name="DoneReceiptRequest">
+    <part name="ident" type="typens:identType"/>
+    <part name="UUID" type="xsd:string"/>
+  </message>
+
+  <message name="DoneReceiptResponse">
+    <part name="status" type="xsd:int"/>
+  </message>
+
+  <message name="CancelReceiptRequest">
+    <part name="ident" type="typens:identType"/>
+    <part name="UUID" type="xsd:string"/>
+  </message>
+
+  <message name="CancelReceiptResponse">
+    <part name="status" type="xsd:int"/>
+  </message>
+  
+  <portType name="depositPort">
+    <operation name="IsAlive">
+      <input message="typens:IsAliveRequest" />
+      <output message="typens:IsAliveResponse" />
+    </operation>
+    <operation name="GetProviders">
+      <input message="typens:GetProvidersRequest"/>
+      <output message="typens:GetProvidersResponse"/>
+    </operation>
+
+    <operation name="RegisterReceipt">
+      <input message="typens:RegisterReceiptRequest"/>
+      <output message="typens:RegisterReceiptResponse"/>
+    </operation>
+
+    <operation name="RegisterErrorReceipt">
+      <input message="typens:RegisterErrorReceiptRequest"/>
+      <output message="typens:RegisterErrorReceiptResponse"/>
+    </operation>
+
+    <operation name="DoneReceipt">
+      <input message="typens:DoneReceiptRequest"/>
+      <output message="typens:DoneReceiptResponse"/>
+    </operation>
+
+    <operation name="CancelReceipt">
+      <input message="typens:CancelReceiptRequest"/>
+      <output message="typens:CancelReceiptResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="depositBinding" type="typens:depositPort">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="IsAlive">
+      <soap:operation soapAction="urn:depositServiceAction" />
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+    <operation name="GetProviders">
+      <soap:operation soapAction="urn:depositServiceAction"/>      
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+
+    <operation name="RegisterReceipt">
+      <soap:operation soapAction="urn:depositServiceAction"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+    <operation name="RegisterErrorReceipt">
+      <soap:operation soapAction="urn:depositServiceAction"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+    <operation name="DoneReceipt">
+      <soap:operation soapAction="urn:depositServiceAction"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+    <operation name="CancelReceipt">
+      <soap:operation soapAction="urn:depositServiceAction"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.envipco.com/wsdl/depositService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </output>
+    </operation>
+
+
+  </binding>
+  
+  <service name="http://www.envipco.com/wsdl/depositService.wsdl">
+    <documentation>WSDL File for the Envipco deposit service</documentation>
+    <port name="depositPort" binding="typens:depositBinding">
+      <soap:address location="http://139.59.165.125/soap/soap.php" />
+    </port>
+  </service>
+</definitions>
